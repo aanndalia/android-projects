@@ -9,6 +9,13 @@ import com.pong1.framework.implementation.AndroidGame;
 public class MainGame extends AndroidGame {
     @Override
     public Screen getInitScreen() {
+        Assets.load(this);
         return new SplashLoadingScreen(this);
     }
+
+    @Override
+    public void onBackPressed() {
+        getCurrentScreen().backButton();
+    }
+
 }

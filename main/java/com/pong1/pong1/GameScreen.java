@@ -2,7 +2,9 @@ package com.pong1.pong1;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.pong1.framework.Game;
 import com.pong1.framework.Graphics;
@@ -25,8 +27,8 @@ public class GameScreen extends Screen {
     public static Paddle paddle1, paddle2;
     public static Ball ball;
 
-    public static final int gameScreenHeight = 480;
-    public static final int gameScreenWidth = 800;
+    public static int gameScreenHeight = 480;
+    public static int gameScreenWidth = 800;
 
     public static final int paddleSpeed = 8;
     public static final int paddleWidth = 20;
@@ -45,14 +47,15 @@ public class GameScreen extends Screen {
         super(game);
         Log.e("GameScreen", "In GameScreen constructor");
 
-        // initialize game objects
-        paddleImage = Assets.paddle;
-        ballImage = Assets.ball;
+        // initialize screen attributes
 
+
+        // initialize game objects
         paddle1 = new Paddle(0,0, paddleWidth, paddleHeight);
         paddle2 = new Paddle(gameScreenWidth - paddleWidth, 0, paddleWidth, paddleHeight);
         ball = new Ball(gameScreenWidth / 2, gameScreenHeight / 2, ballRadius, ballSpeed, ballSpeed);
 
+        // reset scores
         p1Score = 0;
         p2Score = 0;
 
@@ -126,6 +129,7 @@ public class GameScreen extends Screen {
             // handle condition if ball hits a paddle - do rebound
             if((ball.getY() - ball.getRadius() <= paddle2.getY() + paddle2.getHeight())
             && (ball.getY() + ball.getRadius() >= paddle2.getY())){
+                Assets.collision.play(0.75f);
                 ball.ballHitsPaddleHandler();
             }
             // handle case if ball hits edge but not paddle (score)
@@ -144,6 +148,7 @@ public class GameScreen extends Screen {
             // handle condition if ball hits a paddle - do rebound
             if(        (ball.getY() - ball.getRadius() <= paddle1.getY() + paddle1.getHeight())
                     && (ball.getY() + ball.getRadius() >= paddle1.getY())){
+                Assets.collision.play(0.75f);
                 ball.ballHitsPaddleHandler();
             }
             // handle case if ball hits edge but not paddle (score)
