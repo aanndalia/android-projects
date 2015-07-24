@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Ball Speed (1-7)"
+        android:text="Ball Speed (1-9)"
         android:id="@+id/ballSpeedtextView"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
@@ -72,14 +72,14 @@
         android:layout_below="@+id/playToTextView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/playToTextView"
-        android:layout_alignEnd="@+id/playToTextView" />
+        android:layout_alignRight="@+id/volumeCheckbox"
+        android:layout_alignEnd="@+id/volumeCheckbox" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Play To"
+        android:text=" Play To (1-9)"
         android:id="@+id/playToTextView"
         android:layout_below="@+id/singlePlayerCheckbox"
         android:layout_alignParentLeft="true"

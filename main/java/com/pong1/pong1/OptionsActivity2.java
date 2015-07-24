@@ -66,6 +66,9 @@ public class OptionsActivity2 extends Activity {
         MainGame.optionsSoundOn = volumeCheckbox.isChecked();
         MainGame.optionsPlayTo = Integer.parseInt(playToEditText.getText().toString());
 
+        if(MainGame.optionsPlayTo == 0)
+            MainGame.optionsPlayTo = 1;
+
         // debug options data
         System.out.println("In saved handler");
         System.out.println("play to: " + Integer.toString(MainGame.optionsPlayTo));
