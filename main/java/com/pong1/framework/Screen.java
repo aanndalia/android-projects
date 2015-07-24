@@ -1,5 +1,7 @@
 package com.pong1.framework;
 
+import android.app.Activity;
+
 public abstract class Screen {
     protected final Game game;
 

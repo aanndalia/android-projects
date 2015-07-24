@@ -34,31 +34,54 @@ public class GameScreen extends Screen {
     public static final int paddleWidth = 20;
     public static final int paddleHeight = 80;
     public static final int ballRadius = 10;
-    public static final int ballSpeed = 5;
+    //public static final int ballSpeed = 5;
+
+    //public static int ballSpeed = MainGame.optionsBallSpeed + 2;
+    //public static int pointsToWin = MainGame.optionsPlayTo;
+    public static int ballSpeed;
+    public static int pointsToWin;
+    public static boolean soundOn;
+    public static boolean isSinglePlayer;
 
     public int p1Score;
     public int p2Score;
 
-    public static final int pointsToWin = 3;
+    //public static final int pointsToWin = 3;
 
-    private Image paddleImage, ballImage;
+    //private Image paddleImage, ballImage;
 
     public GameScreen(Game game) {
         super(game);
         Log.e("GameScreen", "In GameScreen constructor");
 
-        // initialize screen attributes
-
+        // set options data
+        ballSpeed = MainGame.optionsBallSpeed + 2;
+        pointsToWin = MainGame.optionsPlayTo;
+        isSinglePlayer = MainGame.optionsIsSinglePlayer;
+        soundOn = MainGame.optionsSoundOn;
 
         // initialize game objects
         paddle1 = new Paddle(0,0, paddleWidth, paddleHeight);
-        paddle2 = new Paddle(gameScreenWidth - paddleWidth, 0, paddleWidth, paddleHeight);
+
+        if(isSinglePlayer)
+            paddle2 = new Paddle(gameScreenWidth - paddleWidth, 0, paddleWidth, gameScreenHeight);
+        else
+            paddle2 = new Paddle(gameScreenWidth - paddleWidth, 0, paddleWidth, paddleHeight);
+
         ball = new Ball(gameScreenWidth / 2, gameScreenHeight / 2, ballRadius, ballSpeed, ballSpeed);
 
         // reset scores
         p1Score = 0;
         p2Score = 0;
 
+        // debug options data
+        System.out.println("In GameScreen constructor");
+        System.out.println("play to: " + Integer.toString(pointsToWin));
+        System.out.println("ball speed: " + Integer.toString(ballSpeed));
+        System.out.print("single player: ");
+        System.out.println(isSinglePlayer);
+        System.out.print("volume on: ");
+        System.out.println(soundOn);
     }
 
     @Override
@@ -129,8 +152,12 @@ public class GameScreen extends Screen {
             // handle condition if ball hits a paddle - do rebound
             if((ball.getY() - ball.getRadius() <= paddle2.getY() + paddle2.getHeight())
             && (ball.getY() + ball.getRadius() >= paddle2.getY())){
-                Assets.collision.play(0.75f);
+                if(soundOn)
+                    Assets.collision.play(0.75f);
                 ball.ballHitsPaddleHandler();
+                if(isSinglePlayer) {
+                    ++p1Score;
+                }
             }
             // handle case if ball hits edge but not paddle (score)
             else{
@@ -148,19 +175,25 @@ public class GameScreen extends Screen {
             // handle condition if ball hits a paddle - do rebound
             if(        (ball.getY() - ball.getRadius() <= paddle1.getY() + paddle1.getHeight())
                     && (ball.getY() + ball.getRadius() >= paddle1.getY())){
-                Assets.collision.play(0.75f);
+                if(soundOn)
+                    Assets.collision.play(0.75f);
                 ball.ballHitsPaddleHandler();
             }
             // handle case if ball hits edge but not paddle (score)
             else{
                 //ball.setSpeedX(-ball.getSpeedX());
-                System.out.println("Score player 2");
-                resetBall(ballSpeed);
-                ++p2Score;
-                if(p2Score >= pointsToWin)
+                if(isSinglePlayer == false) {
+                    System.out.println("Score player 2");
+                    resetBall(ballSpeed);
+                    ++p2Score;
+                    if (p2Score >= pointsToWin)
+                        state = GameState.GameOver;
+                    else
+                        state = GameState.Ready;
+                }
+                else {
                     state = GameState.GameOver;
-                else
-                    state = GameState.Ready;
+                }
             }
         }
 
@@ -220,7 +253,7 @@ public class GameScreen extends Screen {
             if (event.type == Input.TouchEvent.TOUCH_DOWN) {
                 if (inBounds(event, 0, 0, 800, 480)) {
                     nullify();
-                    game.setScreen(new MainMenuScreen(game));
+                    game.setScreen(new MainMenuScreen(game, MainGame.appContext));
                     return;
                 }
             }
@@ -235,8 +268,8 @@ public class GameScreen extends Screen {
         paddle2 = null;
         ball = null;
 
-        paddleImage = null;
-        ballImage = null;
+        //paddleImage = null;
+        //ballImage = null;
 
         System.gc();
     }
@@ -269,7 +302,8 @@ public class GameScreen extends Screen {
         paint.setColor(Color.WHITE);
 
         g.drawString(Integer.toString(p1Score), paddle1.getWidth() + 20, gameScreenHeight - 20, paint);
-        g.drawString(Integer.toString(p2Score), gameScreenWidth - paddle2.getWidth() - 20, gameScreenHeight - 20, paint);
+        if(isSinglePlayer == false)
+            g.drawString(Integer.toString(p2Score), gameScreenWidth - paddle2.getWidth() - 20, gameScreenHeight - 20, paint);
 
         // Secondly, draw the UI above the game elements.
         if (state == GameState.Ready)
@@ -339,20 +373,25 @@ public class GameScreen extends Screen {
         paint2.setColor(Color.WHITE);
 
         //g.drawRect(0, 0, 1281, 801, Color.BLACK);
-        String winStr = "Player 1 Wins!";
-        if(p2Score > p1Score)
-            winStr = "Player 2 Wins!";
+        if(isSinglePlayer == false) {
+            String winStr = "Player 1 Wins!";
+            if (p2Score > p1Score)
+                winStr = "Player 2 Wins!";
 
-        StringBuilder scoreSb = new StringBuilder();
-        scoreSb.append("Score: Player 1 - ");
-        scoreSb.append(p1Score);
-        scoreSb.append(", Player 2 - ");
-        scoreSb.append(p2Score);
-        String scoreStr = scoreSb.toString();
+            StringBuilder scoreSb = new StringBuilder();
+            scoreSb.append("Score: Player 1 - ");
+            scoreSb.append(p1Score);
+            scoreSb.append(", Player 2 - ");
+            scoreSb.append(p2Score);
+            String scoreStr = scoreSb.toString();
 
-        g.drawString(winStr, 400, 240, paint2);
-        g.drawString(scoreStr, 400, 290, paint);
-        g.drawString("Tap to return.", 400, 330, paint);
+            g.drawString(winStr, 400, 240, paint2);
+            g.drawString(scoreStr, 400, 290, paint);
+            g.drawString("Tap to return.", 400, 330, paint);
+        }
+        else {
+            g.drawString("Score: " + Integer.toString(p1Score), 400, 240, paint2);
+        }
 
     }
 
@@ -380,7 +419,7 @@ public class GameScreen extends Screen {
 
     private void goToMenu() {
         // TODO Auto-generated method stub
-        game.setScreen(new MainMenuScreen(game));
+        game.setScreen(new MainMenuScreen(game, MainGame.appContext));
 
     }
 }

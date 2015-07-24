@@ -8,7 +8,7 @@ import com.pong1.framework.Sound;
  * Created by stree_001 on 7/18/2015.
  */
 public class Assets {
-    public static Image menu, splash, paddle, ball, button;
+    public static Image menu, splash, paddle, ball, button, optionsButton;
     public static Sound collision;
     public static Music theme;
 
