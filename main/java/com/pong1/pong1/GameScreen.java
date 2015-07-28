@@ -12,7 +12,11 @@ import com.pong1.framework.Image;
 import com.pong1.framework.Input;
 import com.pong1.framework.Screen;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by stree_001 on 7/19/2015.
@@ -55,20 +59,27 @@ public class GameScreen extends Screen {
         Log.e("GameScreen", "In GameScreen constructor");
 
         // set options data
-        ballSpeed = MainGame.optionsBallSpeed + 2;
+        ballSpeed = MainGame.optionsBallSpeed + 3;
         pointsToWin = MainGame.optionsPlayTo;
         isSinglePlayer = MainGame.optionsIsSinglePlayer;
         soundOn = MainGame.optionsSoundOn;
 
+        int midHeight = gameScreenHeight / 2 - paddleHeight / 2;
         // initialize game objects
-        paddle1 = new Paddle(0,0, paddleWidth, paddleHeight);
+        paddle1 = new Paddle(0,midHeight, paddleWidth, paddleHeight);
 
         if(isSinglePlayer)
             paddle2 = new Paddle(gameScreenWidth - paddleWidth, 0, paddleWidth, gameScreenHeight);
         else
-            paddle2 = new Paddle(gameScreenWidth - paddleWidth, 0, paddleWidth, paddleHeight);
+            paddle2 = new Paddle(gameScreenWidth - paddleWidth, midHeight, paddleWidth, paddleHeight);
 
-        ball = new Ball(gameScreenWidth / 2, gameScreenHeight / 2, ballRadius, ballSpeed, ballSpeed);
+        Random rand = new Random();
+        int randInt = rand.nextInt((2 - 0) + 1) + 0;
+        int randInt2 = rand.nextInt((2 - 0) + 1) + 0;
+
+        System.out.println("random number: " + Integer.toString(randInt));
+        System.out.println(randInt == 1 ? ballSpeed : -ballSpeed);
+        ball = new Ball(gameScreenWidth / 2, gameScreenHeight / 2, ballRadius, randInt == 1 ? ballSpeed : -ballSpeed, randInt2 == 1 ? ballSpeed : -ballSpeed);
 
         // reset scores
         p1Score = 0;
@@ -110,6 +121,7 @@ public class GameScreen extends Screen {
         if (touchEvents.size() > 0) {
             Log.e("updateReady", "Entering running state");
             state = GameState.Running;
+            Assets.theme.play();
         }
     }
 
@@ -147,17 +159,14 @@ public class GameScreen extends Screen {
 
 
 
-        // check if ball is at right or left edge
+        // check if ball is at right edge
         if(ball.getX() + ball.getRadius() >= paddle2.getX()) {
-            // handle condition if ball hits a paddle - do rebound
+            // handle condition if ball hits paddle2
             if((ball.getY() - ball.getRadius() <= paddle2.getY() + paddle2.getHeight())
             && (ball.getY() + ball.getRadius() >= paddle2.getY())){
                 if(soundOn)
                     Assets.collision.play(0.75f);
                 ball.ballHitsPaddleHandler();
-                if(isSinglePlayer) {
-                    ++p1Score;
-                }
             }
             // handle case if ball hits edge but not paddle (score)
             else{
@@ -172,12 +181,15 @@ public class GameScreen extends Screen {
             }
         }
         else if(ball.getX() - ball.getRadius() <= paddle1.getX() + paddle1.getWidth()) {
-            // handle condition if ball hits a paddle - do rebound
+            // handle condition if ball hits a paddle1
             if(        (ball.getY() - ball.getRadius() <= paddle1.getY() + paddle1.getHeight())
                     && (ball.getY() + ball.getRadius() >= paddle1.getY())){
                 if(soundOn)
                     Assets.collision.play(0.75f);
                 ball.ballHitsPaddleHandler();
+                if(isSinglePlayer) {
+                    ++p1Score;
+                }
             }
             // handle case if ball hits edge but not paddle (score)
             else{
@@ -192,7 +204,12 @@ public class GameScreen extends Screen {
                         state = GameState.Ready;
                 }
                 else {
+                    // In Single Player mode and player just lost
                     state = GameState.GameOver;
+                    if(p1Score > MainGame.highScores.get(MainGame.optionsBallSpeed)) {
+                        MainGame.highScores.set(MainGame.optionsBallSpeed, p1Score);
+                        serializeHighScores();
+                    }
                 }
             }
         }
@@ -204,6 +221,11 @@ public class GameScreen extends Screen {
 
     private void resetBall(int speed) {
         ball.setSpeedX(speed);
+
+        Random rand = new Random();
+        int randInt = rand.nextInt((2 - 0) + 1) + 0;
+        ball.setSpeedY(randInt == 1 ? ballSpeed : -ballSpeed);
+
         ball.setX(gameScreenWidth / 2);
         ball.setY(gameScreenHeight / 2);
     }
@@ -397,29 +419,51 @@ public class GameScreen extends Screen {
 
     @Override
     public void pause() {
-        if (state == GameState.Running)
+        Log.d("GameScreen pause", "pause");
+        if (state == GameState.Running) {
             state = GameState.Paused;
+            Assets.theme.pause();
+        }
     }
 
     @Override
     public void resume() {
-        if (state == GameState.Paused)
+        if (state == GameState.Paused) {
             state = GameState.Running;
+            Assets.theme.play();
+        }
     }
 
     @Override
     public void dispose() {
-
+        Log.d("GameScreen dispose", "dispose");
+        Assets.theme.stop();
     }
 
     @Override
     public void backButton() {
+        Log.d("GameScreen backButton", "backButton");
         pause();
     }
 
     private void goToMenu() {
         // TODO Auto-generated method stub
+        Log.d("GameScreen goToMenu", "goToMenu");
         game.setScreen(new MainMenuScreen(game, MainGame.appContext));
 
     }
+
+    public void serializeHighScores() {
+        try{
+            FileOutputStream fos= new FileOutputStream(MainGame.appContext.getFilesDir().getPath() + "/" + MainGame.highScoresFileName);
+            ObjectOutputStream oos= new ObjectOutputStream(fos);
+            Log.d("GameScreen", "serializeHighScores - writing object");
+            oos.writeObject(MainGame.highScores);
+            oos.close();
+            fos.close();
+        }catch(IOException ioe){
+            ioe.printStackTrace();
+        }
+    }
+
 }

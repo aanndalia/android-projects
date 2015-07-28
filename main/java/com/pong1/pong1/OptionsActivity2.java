@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.pong1.pong1.R;
 
@@ -15,6 +16,7 @@ public class OptionsActivity2 extends Activity {
     CheckBox singlePlayerCheckbox;
     EditText playToEditText;
     EditText ballSpeedEditText;
+    TextView highScoreValueTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,8 @@ public class OptionsActivity2 extends Activity {
         ballSpeedEditText = (EditText) findViewById(R.id.ballSpeedInput);
         ballSpeedEditText.setText(Integer.toString(MainGame.optionsBallSpeed));
 
+        highScoreValueTextView = (TextView) findViewById(R.id.highScoreValueTextView);
+        highScoreValueTextView.setText(Integer.toString(MainGame.highScores.get(MainGame.optionsBallSpeed)));
     }
 
     @Override
@@ -79,7 +83,7 @@ public class OptionsActivity2 extends Activity {
         System.out.println(MainGame.optionsSoundOn);
 
         Assets.theme.setVolume(MainGame.optionsSoundOn == true ? 0.50f : 0.0f);
-        Assets.theme.play();
+        //Assets.theme.play();
 
         finish();
     }

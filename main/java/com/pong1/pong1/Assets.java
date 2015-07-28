@@ -17,7 +17,7 @@ public class Assets {
         theme = game.getAudio().createMusic("pong_music_1.mp3");
         theme.setLooping(true);
         theme.setVolume(0.50f);
-        theme.play();
+        //theme.play();
 
         collision = game.getAudio().createSound("ping_pong_8bit_beeep.ogg");
         //collision.play(0.75f);
