@@ -33,8 +33,10 @@ public class LoadingScreen extends Screen {
         Assets.menu = g.newImage("myloadscreen2.png", Graphics.ImageFormat.RGB565);
         Assets.paddle = g.newImage("paddle.png", Graphics.ImageFormat.RGB565);
         Assets.ball = g.newImage("ball.png", Graphics.ImageFormat.RGB565);
-        Assets.button = g.newImage("start_button.png", Graphics.ImageFormat.RGB565);
+        Assets.button = g.newImage("2p_button.png", Graphics.ImageFormat.RGB565);
         Assets.optionsButton = g.newImage("options_button.png", Graphics.ImageFormat.RGB565);
+        Assets.singlesButton = g.newImage("1p_button.png", Graphics.ImageFormat.RGB565);
+        Assets.singlesAiButton = g.newImage("1p_ai_button.png", Graphics.ImageFormat.RGB565);
 
         game.setScreen(new MainMenuScreen(game, appContext));
 

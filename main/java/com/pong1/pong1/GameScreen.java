@@ -46,6 +46,10 @@ public class GameScreen extends Screen {
     public static int pointsToWin;
     public static boolean soundOn;
     public static boolean isSinglePlayer;
+    public static boolean useAI;
+
+    public static MainGame.Mode mode;
+
 
     public int p1Score;
     public int p2Score;
@@ -63,12 +67,15 @@ public class GameScreen extends Screen {
         pointsToWin = MainGame.optionsPlayTo;
         isSinglePlayer = MainGame.optionsIsSinglePlayer;
         soundOn = MainGame.optionsSoundOn;
+        useAI = MainGame.optionsUseAI;
+
+        mode = MainGame.gameMode;
 
         int midHeight = gameScreenHeight / 2 - paddleHeight / 2;
         // initialize game objects
         paddle1 = new Paddle(0,midHeight, paddleWidth, paddleHeight);
 
-        if(isSinglePlayer)
+        if(mode == MainGame.Mode.SINGLE_MODE)
             paddle2 = new Paddle(gameScreenWidth - paddleWidth, 0, paddleWidth, gameScreenHeight);
         else
             paddle2 = new Paddle(gameScreenWidth - paddleWidth, midHeight, paddleWidth, paddleHeight);
@@ -78,7 +85,9 @@ public class GameScreen extends Screen {
         int randInt2 = rand.nextInt((2 - 0) + 1) + 0;
 
         System.out.println("random number: " + Integer.toString(randInt));
+        System.out.println("random number 2: " + Integer.toString(randInt2));
         System.out.println(randInt == 1 ? ballSpeed : -ballSpeed);
+        System.out.println(randInt2 == 1 ? ballSpeed : -ballSpeed);
         ball = new Ball(gameScreenWidth / 2, gameScreenHeight / 2, ballRadius, randInt == 1 ? ballSpeed : -ballSpeed, randInt2 == 1 ? ballSpeed : -ballSpeed);
 
         // reset scores
@@ -93,6 +102,10 @@ public class GameScreen extends Screen {
         System.out.println(isSinglePlayer);
         System.out.print("volume on: ");
         System.out.println(soundOn);
+        System.out.print("ai on: ");
+        System.out.println(useAI);
+        System.out.print("mode: ");
+        System.out.println(mode);
     }
 
     @Override
@@ -138,10 +151,10 @@ public class GameScreen extends Screen {
                 else if (inBounds(event, 0, gameScreenHeight / 2, gameScreenWidth / 2, gameScreenHeight)) {
                     paddle1.setSpeed(paddleSpeed);
                 }
-                else if (inBounds(event, gameScreenWidth / 2, 0, gameScreenWidth, gameScreenHeight / 2)) {
+                else if ((mode == MainGame.Mode.TWO_PLAYER_MODE) && inBounds(event, gameScreenWidth / 2, 0, gameScreenWidth, gameScreenHeight / 2)) {
                     paddle2.setSpeed(-paddleSpeed);
                 }
-                else if (inBounds(event, gameScreenWidth / 2, gameScreenHeight / 2, gameScreenWidth, gameScreenHeight)) {
+                else if ((mode == MainGame.Mode.TWO_PLAYER_MODE) && inBounds(event, gameScreenWidth / 2, gameScreenHeight / 2, gameScreenWidth, gameScreenHeight)) {
                     paddle2.setSpeed(paddleSpeed);
                 }
             }
@@ -157,6 +170,10 @@ public class GameScreen extends Screen {
 
         }
 
+        // Do AI moves
+        if(mode == MainGame.Mode.AI_MODE) {
+            updatePaddleAI();
+        }
 
 
         // check if ball is at right edge
@@ -181,20 +198,29 @@ public class GameScreen extends Screen {
             }
         }
         else if(ball.getX() - ball.getRadius() <= paddle1.getX() + paddle1.getWidth()) {
-            // handle condition if ball hits a paddle1
+            // handle condition if ball hits paddle1
             if(        (ball.getY() - ball.getRadius() <= paddle1.getY() + paddle1.getHeight())
                     && (ball.getY() + ball.getRadius() >= paddle1.getY())){
                 if(soundOn)
                     Assets.collision.play(0.75f);
                 ball.ballHitsPaddleHandler();
-                if(isSinglePlayer) {
+                if(mode == MainGame.Mode.SINGLE_MODE) {
                     ++p1Score;
                 }
             }
             // handle case if ball hits edge but not paddle (score)
             else{
                 //ball.setSpeedX(-ball.getSpeedX());
-                if(isSinglePlayer == false) {
+                if(mode == MainGame.Mode.SINGLE_MODE) {
+                    // In Single Player mode and player just lost
+                    state = GameState.GameOver;
+                    if(p1Score > MainGame.highScores.get(MainGame.optionsBallSpeed)) {
+                        MainGame.highScores.set(MainGame.optionsBallSpeed, p1Score);
+                        serializeHighScores();
+                    }
+                }
+                else {
+                    // Not in single player mode, ball hits edge but not paddle
                     System.out.println("Score player 2");
                     resetBall(ballSpeed);
                     ++p2Score;
@@ -202,14 +228,6 @@ public class GameScreen extends Screen {
                         state = GameState.GameOver;
                     else
                         state = GameState.Ready;
-                }
-                else {
-                    // In Single Player mode and player just lost
-                    state = GameState.GameOver;
-                    if(p1Score > MainGame.highScores.get(MainGame.optionsBallSpeed)) {
-                        MainGame.highScores.set(MainGame.optionsBallSpeed, p1Score);
-                        serializeHighScores();
-                    }
                 }
             }
         }
@@ -324,7 +342,7 @@ public class GameScreen extends Screen {
         paint.setColor(Color.WHITE);
 
         g.drawString(Integer.toString(p1Score), paddle1.getWidth() + 20, gameScreenHeight - 20, paint);
-        if(isSinglePlayer == false)
+        if(mode == MainGame.Mode.AI_MODE || mode == MainGame.Mode.TWO_PLAYER_MODE)
             g.drawString(Integer.toString(p2Score), gameScreenWidth - paddle2.getWidth() - 20, gameScreenHeight - 20, paint);
 
         // Secondly, draw the UI above the game elements.
@@ -395,26 +413,34 @@ public class GameScreen extends Screen {
         paint2.setColor(Color.WHITE);
 
         //g.drawRect(0, 0, 1281, 801, Color.BLACK);
-        if(isSinglePlayer == false) {
+        if(mode == MainGame.Mode.SINGLE_MODE) {
+            g.drawString("Score: " + Integer.toString(p1Score), 400, 240, paint2);
+        }
+        else {
             String winStr = "Player 1 Wins!";
-            if (p2Score > p1Score)
-                winStr = "Player 2 Wins!";
+            if (p2Score > p1Score) {
+                if(mode == MainGame.Mode.TWO_PLAYER_MODE)
+                    winStr = "Player 2 Wins!";
+                else if(mode == MainGame.Mode.AI_MODE)
+                    winStr = "Computer Wins";
+
+            }
 
             StringBuilder scoreSb = new StringBuilder();
             scoreSb.append("Score: Player 1 - ");
             scoreSb.append(p1Score);
-            scoreSb.append(", Player 2 - ");
+            if(mode == MainGame.Mode.TWO_PLAYER_MODE)
+                scoreSb.append(", Player 2 - ");
+            else if(mode == MainGame.Mode.AI_MODE)
+                scoreSb.append(", Computer - ");
             scoreSb.append(p2Score);
             String scoreStr = scoreSb.toString();
 
             g.drawString(winStr, 400, 240, paint2);
             g.drawString(scoreStr, 400, 290, paint);
-            g.drawString("Tap to return.", 400, 330, paint);
-        }
-        else {
-            g.drawString("Score: " + Integer.toString(p1Score), 400, 240, paint2);
-        }
 
+        }
+        g.drawString("Tap to return.", 400, 330, paint);
     }
 
     @Override
@@ -463,6 +489,38 @@ public class GameScreen extends Screen {
             fos.close();
         }catch(IOException ioe){
             ioe.printStackTrace();
+        }
+    }
+
+    public void updatePaddleAI() {
+        // find midPoint of paddle in y
+        int paddleMidPointY = paddle2.getY() + paddle2.getHeight() / 2;
+
+        // scale the AI speed by the ball speed
+        int aiPaddleSpeed = ballSpeed - 1;
+
+        // Check if ball is moving away or towards paddle
+        if(ball.getSpeedX() < 0) {
+            // Moving away from paddle - center the paddle
+            if(paddleMidPointY < (gameScreenHeight / 2)){
+                // If paddle is above middle of screen, move it down
+                paddle2.setSpeed(aiPaddleSpeed);
+            }
+            else {
+                // If paddle is below middle of screen, move it up
+                paddle2.setSpeed(-aiPaddleSpeed);
+            }
+        }
+        else {
+            // Moving towards the paddle - try to hit the ball
+            if(ball.getY() < paddleMidPointY) {
+                // If ball is higher than paddle, then move up
+                paddle2.setSpeed(-aiPaddleSpeed);
+            }
+            else {
+                // If ball is lower than paddle, then move down
+                paddle2.setSpeed(aiPaddleSpeed);
+            }
         }
     }
 

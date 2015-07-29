@@ -24,9 +24,17 @@ public class MainGame extends AndroidGame {
     public static boolean optionsIsSinglePlayer = false;
     public static boolean optionsSoundOn = true;
     public static int optionsPlayTo = 3;
+    public static boolean optionsEasyTouchMode = false;
+    public static boolean optionsUseAI = false;
+
+    enum Mode {
+        TWO_PLAYER_MODE, AI_MODE, SINGLE_MODE
+    }
+
+    public static Mode gameMode = Mode.TWO_PLAYER_MODE;
 
     public static ArrayList<Integer> highScores;
-    public static String highScoresPath = "C:/Users/stree_001/AndroidStudioProjects/Pong1";
+    //public static String highScoresPath = "C:/Users/stree_001/AndroidStudioProjects/Pong1";
     public static String highScoresFileName = "highscores.bin";
     //public static String highScoresFileName = "C:/high_scores.dat";
 

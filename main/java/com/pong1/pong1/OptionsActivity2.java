@@ -14,9 +14,11 @@ import com.pong1.pong1.R;
 public class OptionsActivity2 extends Activity {
     CheckBox volumeCheckbox;
     CheckBox singlePlayerCheckbox;
+    CheckBox easyTouchCheckbox;
     EditText playToEditText;
     EditText ballSpeedEditText;
     TextView highScoreValueTextView;
+    CheckBox aiCheckbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,12 @@ public class OptionsActivity2 extends Activity {
 
         highScoreValueTextView = (TextView) findViewById(R.id.highScoreValueTextView);
         highScoreValueTextView.setText(Integer.toString(MainGame.highScores.get(MainGame.optionsBallSpeed)));
+
+        easyTouchCheckbox = (CheckBox) findViewById(R.id.easyTouchCheckbox);
+        easyTouchCheckbox.setChecked(MainGame.optionsEasyTouchMode);
+
+        aiCheckbox = (CheckBox) findViewById(R.id.aiCheckbox);
+        aiCheckbox.setChecked(MainGame.optionsUseAI);
     }
 
     @Override
@@ -69,6 +77,8 @@ public class OptionsActivity2 extends Activity {
         MainGame.optionsIsSinglePlayer = singlePlayerCheckbox.isChecked();
         MainGame.optionsSoundOn = volumeCheckbox.isChecked();
         MainGame.optionsPlayTo = Integer.parseInt(playToEditText.getText().toString());
+        MainGame.optionsEasyTouchMode = easyTouchCheckbox.isChecked();
+        MainGame.optionsUseAI = aiCheckbox.isChecked();
 
         if(MainGame.optionsPlayTo == 0)
             MainGame.optionsPlayTo = 1;
@@ -81,6 +91,10 @@ public class OptionsActivity2 extends Activity {
         System.out.println(MainGame.optionsIsSinglePlayer);
         System.out.print("volume on: ");
         System.out.println(MainGame.optionsSoundOn);
+        System.out.print("easy touch mode on: ");
+        System.out.println(MainGame.optionsEasyTouchMode);
+        System.out.print("AI mode on: ");
+        System.out.println(MainGame.optionsUseAI);
 
         Assets.theme.setVolume(MainGame.optionsSoundOn == true ? 0.50f : 0.0f);
         //Assets.theme.play();
@@ -101,5 +115,9 @@ public class OptionsActivity2 extends Activity {
 
         ballSpeedEditText = (EditText) findViewById(R.id.ballSpeedInput);
         ballSpeedEditText.setText("5");
+
+        easyTouchCheckbox.setChecked(false);
+
+        aiCheckbox.setChecked(false);
     }
 }
