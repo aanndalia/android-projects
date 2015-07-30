@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.pong1.pong1.R;
@@ -19,12 +22,37 @@ public class OptionsActivity2 extends Activity {
     EditText ballSpeedEditText;
     TextView highScoreValueTextView;
     CheckBox aiCheckbox;
+    Spinner aiDifficultyDropdown;
+    //int aiDifficultyPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options_activity2);
         System.out.println("onCreate");
+
+        aiDifficultyDropdown = (Spinner)findViewById(R.id.aiDifficultySpinner);
+        String[] items = new String[]{"Easy", "Moderate", "Hard"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+        aiDifficultyDropdown.setAdapter(adapter);
+
+        /*
+        aiDifficultyDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                System.out.println("Selected position " + Integer.toString(position));
+                aiDifficultyPosition = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+        */
+
+        aiDifficultyDropdown.setSelection(MainGame.aiDifficulty.ordinal());
 
         volumeCheckbox = (CheckBox) findViewById(R.id.volumeCheckbox);
         volumeCheckbox.setChecked(MainGame.optionsSoundOn);
@@ -83,6 +111,8 @@ public class OptionsActivity2 extends Activity {
         if(MainGame.optionsPlayTo == 0)
             MainGame.optionsPlayTo = 1;
 
+        MainGame.aiDifficulty = MainGame.AiDifficulty.fromInteger(aiDifficultyDropdown.getSelectedItemPosition());
+
         // debug options data
         System.out.println("In saved handler");
         System.out.println("play to: " + Integer.toString(MainGame.optionsPlayTo));
@@ -95,6 +125,8 @@ public class OptionsActivity2 extends Activity {
         System.out.println(MainGame.optionsEasyTouchMode);
         System.out.print("AI mode on: ");
         System.out.println(MainGame.optionsUseAI);
+        System.out.print("AI Difficulty: ");
+        System.out.println(Integer.toString(aiDifficultyDropdown.getSelectedItemPosition()));
 
         Assets.theme.setVolume(MainGame.optionsSoundOn == true ? 0.50f : 0.0f);
         //Assets.theme.play();
@@ -119,5 +151,8 @@ public class OptionsActivity2 extends Activity {
         easyTouchCheckbox.setChecked(false);
 
         aiCheckbox.setChecked(false);
+
+        System.out.println("EASY ordinal " + Integer.toString(MainGame.AiDifficulty.EASY.ordinal()) + ", " + Integer.toString(MainGame.AiDifficulty.HARD.ordinal()));
+        aiDifficultyDropdown.setSelection(MainGame.AiDifficulty.EASY.ordinal());
     }
 }

@@ -37,6 +37,7 @@ public class LoadingScreen extends Screen {
         Assets.optionsButton = g.newImage("options_button.png", Graphics.ImageFormat.RGB565);
         Assets.singlesButton = g.newImage("1p_button.png", Graphics.ImageFormat.RGB565);
         Assets.singlesAiButton = g.newImage("1p_ai_button.png", Graphics.ImageFormat.RGB565);
+        Assets.highScoresButton = g.newImage("high_scores_button.png", Graphics.ImageFormat.RGB565);
 
         game.setScreen(new MainMenuScreen(game, appContext));
 

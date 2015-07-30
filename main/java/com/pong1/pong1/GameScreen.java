@@ -15,6 +15,7 @@ import com.pong1.framework.Screen;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -63,7 +64,12 @@ public class GameScreen extends Screen {
         Log.e("GameScreen", "In GameScreen constructor");
 
         // set options data
-        ballSpeed = MainGame.optionsBallSpeed + 3;
+        if(mode == MainGame.Mode.AI_MODE) {
+            ballSpeed = MainGame.aiDifficulty.ordinal() + 8;
+        }
+        else {
+            ballSpeed = MainGame.optionsBallSpeed + 3;
+        }
         pointsToWin = MainGame.optionsPlayTo;
         isSinglePlayer = MainGame.optionsIsSinglePlayer;
         soundOn = MainGame.optionsSoundOn;
@@ -191,8 +197,13 @@ public class GameScreen extends Screen {
                 System.out.println("Score player 1");
                 resetBall(-ballSpeed);
                 ++p1Score;
-                if(p1Score >= pointsToWin)
+                if(p1Score >= pointsToWin) {
                     state = GameState.GameOver;
+                    if(mode == MainGame.Mode.AI_MODE) {
+                        MainGame.aiHighScores.set(MainGame.aiDifficulty.ordinal(), MainGame.aiHighScores.get(MainGame.aiDifficulty.ordinal()) + 1);
+                        serializeHighScores(MainGame.ai_highScoresFileName, MainGame.aiHighScores);
+                    }
+                }
                 else
                     state = GameState.Ready;
             }
@@ -216,7 +227,7 @@ public class GameScreen extends Screen {
                     state = GameState.GameOver;
                     if(p1Score > MainGame.highScores.get(MainGame.optionsBallSpeed)) {
                         MainGame.highScores.set(MainGame.optionsBallSpeed, p1Score);
-                        serializeHighScores();
+                        serializeHighScores(MainGame.highScoresFileName, MainGame.highScores);
                     }
                 }
                 else {
@@ -224,8 +235,9 @@ public class GameScreen extends Screen {
                     System.out.println("Score player 2");
                     resetBall(ballSpeed);
                     ++p2Score;
-                    if (p2Score >= pointsToWin)
+                    if (p2Score >= pointsToWin) {
                         state = GameState.GameOver;
+                    }
                     else
                         state = GameState.Ready;
                 }
@@ -479,12 +491,12 @@ public class GameScreen extends Screen {
 
     }
 
-    public void serializeHighScores() {
+    public void serializeHighScores(String fileName, ArrayList<Integer> scoresContainer) {
         try{
-            FileOutputStream fos= new FileOutputStream(MainGame.appContext.getFilesDir().getPath() + "/" + MainGame.highScoresFileName);
+            FileOutputStream fos= new FileOutputStream(MainGame.appContext.getFilesDir().getPath() + "/" + fileName);
             ObjectOutputStream oos= new ObjectOutputStream(fos);
             Log.d("GameScreen", "serializeHighScores - writing object");
-            oos.writeObject(MainGame.highScores);
+            oos.writeObject(scoresContainer);
             oos.close();
             fos.close();
         }catch(IOException ioe){
@@ -496,8 +508,9 @@ public class GameScreen extends Screen {
         // find midPoint of paddle in y
         int paddleMidPointY = paddle2.getY() + paddle2.getHeight() / 2;
 
-        // scale the AI speed by the ball speed
+        // scale the AI speed by the ball speed and difficulty
         int aiPaddleSpeed = ballSpeed - 1;
+
 
         // Check if ball is moving away or towards paddle
         if(ball.getSpeedX() < 0) {

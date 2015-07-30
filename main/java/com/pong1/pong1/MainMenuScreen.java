@@ -65,6 +65,14 @@ public class MainMenuScreen extends Screen {
                     //Intent in = new Intent (this, OptionsActivity2.class);
                     //startActivity(in);
                 }
+                else if (inBounds(event, 550, 50, 155, 86)) {
+                    System.out.println("Clicked High Scores.");
+                    Intent in = new Intent(appContext, HighScoresActivity.class);
+                    in.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    appContext.startActivity(in);
+                    //Intent in = new Intent (this, OptionsActivity2.class);
+                    //startActivity(in);
+                }
             }
         }
     }
@@ -84,6 +92,8 @@ public class MainMenuScreen extends Screen {
         g.drawImage(Assets.optionsButton, 550, 350);
         g.drawImage(Assets.singlesButton, 200, 350);
         g.drawImage(Assets.singlesAiButton, 375, 350);
+        g.drawImage(Assets.highScoresButton, 550, 50);
+
     }
 
     @Override

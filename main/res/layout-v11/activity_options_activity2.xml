@@ -155,8 +155,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/aiDifficultySpinner"
         android:layout_alignTop="@+id/playToInput"
-        android:layout_alignRight="@+id/easyTouchCheckbox"
-        android:layout_alignEnd="@+id/easyTouchCheckbox"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_toRightOf="@+id/optionsText"
         android:layout_toEndOf="@+id/optionsText"
         android:spinnerMode="dropdown" />
@@ -167,8 +167,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="AI Difficulty"
         android:id="@+id/aiDifficultyTextView"
-        android:layout_alignTop="@+id/playToTextView"
-        android:layout_toRightOf="@+id/optionsText"
-        android:layout_toEndOf="@+id/optionsText" />
+        android:layout_above="@+id/aiDifficultySpinner"
+        android:layout_alignLeft="@+id/aiDifficultySpinner"
+        android:layout_alignStart="@+id/aiDifficultySpinner" />
 
 </RelativeLayout>

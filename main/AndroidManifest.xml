@@ -39,6 +39,10 @@
             android:name=".OptionsActivity2"
             android:label="@string/title_activity_options_activity2" >
         </activity>
+        <activity
+            android:name=".HighScoresActivity"
+            android:label="@string/title_activity_high_scores" >
+        </activity>
     </application>
 
 </manifest>
