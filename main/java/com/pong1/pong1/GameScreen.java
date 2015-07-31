@@ -35,35 +35,27 @@ public class GameScreen extends Screen {
     public static int gameScreenHeight = 480;
     public static int gameScreenWidth = 800;
 
-    public static int paddleSpeed = 8;
-    public static int paddleWidth = 20;
+    public static int paddleSpeed;
+    public static int paddleWidth;
     public static final int paddleHeight = 80;
     public static final int ballRadius = 10;
-    //public static final int ballSpeed = 5;
 
-    //public static int ballSpeed = MainGame.optionsBallSpeed + 2;
-    //public static int pointsToWin = MainGame.optionsPlayTo;
     public static int ballSpeed;
     public static int pointsToWin;
     public static boolean soundOn;
-    public static boolean isSinglePlayer;
-    public static boolean useAI;
 
     public static MainGame.Mode mode;
-
 
     public int p1Score;
     public int p2Score;
 
-    //public static final int pointsToWin = 3;
+    Paint smallFont, largeFont;
 
-    //private Image paddleImage, ballImage;
 
     public GameScreen(Game game) {
         super(game);
-        Log.e("GameScreen", "In GameScreen constructor");
+        Log.d("GameScreen", "In GameScreen constructor");
 
-        //paddleWidth = 20;
         mode = MainGame.gameMode;
 
         // set options data
@@ -85,13 +77,10 @@ public class GameScreen extends Screen {
         }
 
         pointsToWin = MainGame.optionsPlayTo;
-        isSinglePlayer = MainGame.optionsIsSinglePlayer;
         soundOn = MainGame.optionsSoundOn;
-        useAI = MainGame.optionsUseAI;
 
-
-        int midHeight = gameScreenHeight / 2 - paddleHeight / 2;
         // initialize game objects
+        int midHeight = gameScreenHeight / 2 - paddleHeight / 2;
         paddle1 = new Paddle(0,midHeight, paddleWidth, paddleHeight);
 
         if(mode == MainGame.Mode.SINGLE_MODE)
@@ -100,8 +89,8 @@ public class GameScreen extends Screen {
             paddle2 = new Paddle(gameScreenWidth - paddleWidth, midHeight, paddleWidth, paddleHeight);
 
         Random rand = new Random();
-        int randInt = rand.nextInt((2 - 0) + 1) + 0;
-        int randInt2 = rand.nextInt((2 - 0) + 1) + 0;
+        int randInt = rand.nextInt((1 - 0) + 1) + 0;
+        int randInt2 = rand.nextInt((1 - 0) + 1) + 0;
 
         System.out.println("random number: " + Integer.toString(randInt));
         System.out.println("random number 2: " + Integer.toString(randInt2));
@@ -113,16 +102,25 @@ public class GameScreen extends Screen {
         p1Score = 0;
         p2Score = 0;
 
+        // Set up Paint fonts
+        smallFont = new Paint();
+        smallFont.setTextSize(30);
+        smallFont.setTextAlign(Paint.Align.CENTER);
+        smallFont.setAntiAlias(true);
+        smallFont.setColor(Color.WHITE);
+
+        largeFont = new Paint();
+        largeFont.setTextSize(100);
+        largeFont.setTextAlign(Paint.Align.CENTER);
+        largeFont.setAntiAlias(true);
+        largeFont.setColor(Color.WHITE);
+
         // debug options data
         System.out.println("In GameScreen constructor");
         System.out.println("play to: " + Integer.toString(pointsToWin));
         System.out.println("ball speed: " + Integer.toString(ballSpeed));
-        System.out.print("single player: ");
-        System.out.println(isSinglePlayer);
         System.out.print("volume on: ");
         System.out.println(soundOn);
-        System.out.print("ai on: ");
-        System.out.println(useAI);
         System.out.print("mode: ");
         System.out.println(mode);
     }
@@ -151,7 +149,7 @@ public class GameScreen extends Screen {
         // Now the updateRunning() method will be called!
 
         if (touchEvents.size() > 0) {
-            Log.e("updateReady", "Entering running state");
+            Log.d("updateReady", "Entering running state");
             state = GameState.Running;
             Assets.theme.play();
         }
@@ -206,7 +204,6 @@ public class GameScreen extends Screen {
             }
             // handle case if ball hits edge but not paddle (score)
             else{
-                //ball.setSpeedX(-ball.getSpeedX());
                 System.out.println("Score player 1");
                 resetBall(-ballSpeed);
                 ++p1Score;
@@ -234,7 +231,6 @@ public class GameScreen extends Screen {
             }
             // handle case if ball hits edge but not paddle (score)
             else{
-                //ball.setSpeedX(-ball.getSpeedX());
                 if(mode == MainGame.Mode.SINGLE_MODE) {
                     // In Single Player mode and player just lost
                     state = GameState.GameOver;
@@ -266,22 +262,11 @@ public class GameScreen extends Screen {
         ball.setSpeedX(speed);
 
         Random rand = new Random();
-        int randInt = rand.nextInt((2 - 0) + 1) + 0;
+        int randInt = rand.nextInt((1 - 0) + 1) + 0;
         ball.setSpeedY(randInt == 1 ? ballSpeed : -ballSpeed);
 
         ball.setX(gameScreenWidth / 2);
         ball.setY(gameScreenHeight / 2);
-    }
-    private boolean checkCollision(Ball b, Paddle p) {
-        if(        (b.getX() < p.getX() + p.getWidth())
-                && (b.getX() + b.getRadius() > p.getX())
-                && (b.getY() < p.getY() + p.getHeight())
-                && (b.getY() + b.getRadius() > p.getY())) {
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 
     private boolean inBounds(Input.TouchEvent event, int x, int y, int width, int height) {
@@ -333,8 +318,6 @@ public class GameScreen extends Screen {
         paddle2 = null;
         ball = null;
 
-        //paddleImage = null;
-        //ballImage = null;
 
         System.gc();
     }
@@ -360,15 +343,9 @@ public class GameScreen extends Screen {
         g.drawLine(0, gameScreenHeight / 2, gameScreenWidth, gameScreenHeight / 2, Color.DKGRAY);
 
         // Draw scores
-        Paint paint = new Paint();
-        paint.setTextSize(30);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setAntiAlias(true);
-        paint.setColor(Color.WHITE);
-
-        g.drawString(Integer.toString(p1Score), paddle1.getWidth() + 20, gameScreenHeight - 20, paint);
+        g.drawString(Integer.toString(p1Score), paddle1.getWidth() + 20, gameScreenHeight - 20, smallFont);
         if(mode == MainGame.Mode.AI_MODE || mode == MainGame.Mode.TWO_PLAYER_MODE)
-            g.drawString(Integer.toString(p2Score), gameScreenWidth - paddle2.getWidth() - 20, gameScreenHeight - 20, paint);
+            g.drawString(Integer.toString(p2Score), gameScreenWidth - paddle2.getWidth() - 20, gameScreenHeight - 20, smallFont);
 
         // Secondly, draw the UI above the game elements.
         if (state == GameState.Ready)
@@ -384,62 +361,31 @@ public class GameScreen extends Screen {
     private void drawReadyUI() {
         Graphics g = game.getGraphics();
 
-        // Defining a paint object
-        Paint paint = new Paint();
-        paint.setTextSize(30);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setAntiAlias(true);
-        paint.setColor(Color.WHITE);
-
         g.drawARGB(155, 0, 0, 0);
-        g.drawString("Tap to Start.", 400, 240, paint);
+        g.drawString("Tap to Start.", 400, 240, smallFont);
 
     }
 
     private void drawRunningUI() {
         Graphics g = game.getGraphics();
-        //Log.e("drawRunningUI", "draw running UI");
-        /*
-        g.drawImage(Assets.button, 0, 285, 0, 0, 65, 65);
-        g.drawImage(Assets.button, 0, 350, 0, 65, 65, 65);
-        g.drawImage(Assets.button, 0, 415, 0, 130, 65, 65);
-        g.drawImage(Assets.button, 0, 0, 0, 195, 35, 35);
-        */
 
+        // Implement any functionality specific to Running mode here
     }
 
     private void drawPausedUI() {
         Graphics g = game.getGraphics();
-        // Darken the entire screen so you can display the Paused screen.
-        Paint paint = new Paint();
-        paint.setTextSize(100);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setAntiAlias(true);
-        paint.setColor(Color.WHITE);
+
         g.drawARGB(155, 0, 0, 0);
-        g.drawString("Resume", 400, 165, paint);
-        g.drawString("Menu", 400, 360, paint);
+        g.drawString("Resume", 400, 165, largeFont);
+        g.drawString("Menu", 400, 360, largeFont);
 
     }
 
     private void drawGameOverUI() {
         Graphics g = game.getGraphics();
 
-        Paint paint = new Paint();
-        paint.setTextSize(30);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setAntiAlias(true);
-        paint.setColor(Color.WHITE);
-
-        Paint paint2 = new Paint();
-        paint2.setTextSize(100);
-        paint2.setTextAlign(Paint.Align.CENTER);
-        paint2.setAntiAlias(true);
-        paint2.setColor(Color.WHITE);
-
-        //g.drawRect(0, 0, 1281, 801, Color.BLACK);
         if(mode == MainGame.Mode.SINGLE_MODE) {
-            g.drawString("Score: " + Integer.toString(p1Score), 400, 240, paint2);
+            g.drawString("Score: " + Integer.toString(p1Score), 400, 240, largeFont);
         }
         else {
             String winStr = "Player 1 Wins!";
@@ -461,11 +407,11 @@ public class GameScreen extends Screen {
             scoreSb.append(p2Score);
             String scoreStr = scoreSb.toString();
 
-            g.drawString(winStr, 400, 240, paint2);
-            g.drawString(scoreStr, 400, 290, paint);
+            g.drawString(winStr, 400, 240, largeFont);
+            g.drawString(scoreStr, 400, 290, smallFont);
 
         }
-        g.drawString("Tap to return.", 400, 330, paint);
+        g.drawString("Tap to return.", 400, 330, smallFont);
     }
 
     @Override
@@ -479,6 +425,7 @@ public class GameScreen extends Screen {
 
     @Override
     public void resume() {
+        Log.d("GameScreen", "resume - resuming play");
         if (state == GameState.Paused) {
             state = GameState.Running;
             Assets.theme.play();

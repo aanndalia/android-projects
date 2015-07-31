@@ -22,23 +22,6 @@ public class Ball {
         y += speedY;
         x += speedX;
 
-        //paddleRect.set(x, y, x+width, y+height);
-
-        /*
-        if (y < 0){
-            y = 0;
-        }
-
-        else if (y+height > GameScreen.gameScreenHeight){
-            y = GameScreen.gameScreenHeight - height;
-        }
-        */
-        /*
-        if((x + radius > GameScreen.gameScreenWidth) || (x - radius < 0)) {
-            speedX = -speedX;
-            System.out.println("Score");
-        }
-        */
         if((y + radius > GameScreen.gameScreenHeight) || (y - radius < 0))
             speedY = -speedY;
     }

@@ -87,44 +87,17 @@ public class HighScoresActivity extends Activity {
         // Get the TableLayout
         scoreTableLayout.setStretchAllColumns(true);
 
+        // Create header row
         TableRow headerTR = populateRow(50, "Speed", "Score");
         scoreTableLayout.addView(headerTR, new TableLayout.LayoutParams(
                 LayoutParams.FILL_PARENT,
                 LayoutParams.WRAP_CONTENT));
+
         // Go through each item in the array
         for (int current = 0; current < MainGame.highScores.size(); current++)
         {
-            /*
-            // Create a TableRow and give it an ID
-            TableRow tr = new TableRow(this);
-            tr.setId(100+current);
-            tr.setLayoutParams(new TableRow.LayoutParams(
-                    LayoutParams.FILL_PARENT,
-                    LayoutParams.WRAP_CONTENT));
-
-            // Create a TextView to house the name of the province
-            TextView labelTV = new TextView(this);
-            labelTV.setId(200+current);
-            labelTV.setText(Integer.toString(current));
-            labelTV.setTextColor(Color.WHITE);
-            labelTV.setLayoutParams(new LayoutParams(
-                    LayoutParams.FILL_PARENT,
-                    LayoutParams.WRAP_CONTENT));
-            tr.addView(labelTV);
-
-            // Create a TextView to house the value of the after-tax income
-            TextView valueTV = new TextView(this);
-            valueTV.setId(current);
-
-            valueTV.setText(Integer.toString(MainGame.highScores.get(current)));
-            valueTV.setTextColor(Color.WHITE);
-            valueTV.setLayoutParams(new LayoutParams(
-                    LayoutParams.FILL_PARENT,
-                    LayoutParams.WRAP_CONTENT));
-            tr.addView(valueTV);
-            */
-
             TableRow tr = populateRow(current, Integer.toString(current), Integer.toString(MainGame.highScores.get(current)));
+
             // Add the TableRow to the TableLayout
             scoreTableLayout.addView(tr, new TableLayout.LayoutParams(
                     LayoutParams.FILL_PARENT,
@@ -136,6 +109,7 @@ public class HighScoresActivity extends Activity {
         // Get the TableLayout
         aiScoresTableLayout.setStretchAllColumns(true);
 
+        // Create header row
         TableRow headerTR = populateRow(50, "Difficulty", "Wins");
         aiScoresTableLayout.addView(headerTR, new TableLayout.LayoutParams(
                 LayoutParams.FILL_PARENT,

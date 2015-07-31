@@ -65,10 +65,8 @@ public class MainGame extends AndroidGame {
 
     public static ArrayList<Integer> highScores;
     public static ArrayList<Integer> aiHighScores;
-    //public static String highScoresPath = "C:/Users/stree_001/AndroidStudioProjects/Pong1";
     public static String highScoresFileName = "highscores.bin";
     public static String ai_highScoresFileName = "aihighscores.bin";
-    //public static String highScoresFileName = "C:/high_scores.dat";
 
     public static Context appContext;
 
@@ -87,7 +85,6 @@ public class MainGame extends AndroidGame {
     }
 
     public ArrayList<Integer> deserializeHighScores(String fileName, int numLevels) {
-        //String fullPath = highScoresPath + "/" + highScoresFileName;
         String fullPath = "";
         try
         {

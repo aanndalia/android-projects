@@ -23,7 +23,6 @@ public class OptionsActivity2 extends Activity {
     TextView highScoreValueTextView;
     CheckBox aiCheckbox;
     Spinner aiDifficultyDropdown;
-    //int aiDifficultyPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,22 +34,6 @@ public class OptionsActivity2 extends Activity {
         String[] items = new String[]{"Easy", "Moderate", "Hard"};
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
         aiDifficultyDropdown.setAdapter(adapter);
-
-        /*
-        aiDifficultyDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                System.out.println("Selected position " + Integer.toString(position));
-                aiDifficultyPosition = position;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-
-        });
-        */
 
         aiDifficultyDropdown.setSelection(MainGame.aiDifficulty.ordinal());
 
@@ -129,7 +112,6 @@ public class OptionsActivity2 extends Activity {
         System.out.println(Integer.toString(aiDifficultyDropdown.getSelectedItemPosition()));
 
         Assets.theme.setVolume(MainGame.optionsSoundOn == true ? 0.50f : 0.0f);
-        //Assets.theme.play();
 
         finish();
     }
