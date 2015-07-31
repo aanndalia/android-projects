@@ -61,7 +61,7 @@ public class MainGame extends AndroidGame {
     }
 
     public static Mode gameMode = Mode.TWO_PLAYER_MODE;
-    public static AiDifficulty aiDifficulty = AiDifficulty.EASY;
+    public static AiDifficulty aiDifficulty = AiDifficulty.MODERATE;
 
     public static ArrayList<Integer> highScores;
     public static ArrayList<Integer> aiHighScores;

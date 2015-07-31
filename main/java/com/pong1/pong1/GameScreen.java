@@ -35,8 +35,8 @@ public class GameScreen extends Screen {
     public static int gameScreenHeight = 480;
     public static int gameScreenWidth = 800;
 
-    public static final int paddleSpeed = 8;
-    public static final int paddleWidth = 20;
+    public static int paddleSpeed = 8;
+    public static int paddleWidth = 20;
     public static final int paddleHeight = 80;
     public static final int ballRadius = 10;
     //public static final int ballSpeed = 5;
@@ -65,11 +65,19 @@ public class GameScreen extends Screen {
 
         // set options data
         if(mode == MainGame.Mode.AI_MODE) {
-            ballSpeed = MainGame.aiDifficulty.ordinal() + 8;
+            ballSpeed = MainGame.aiDifficulty.ordinal()*2 + 8;
+            paddleSpeed = ballSpeed - 1;
         }
         else {
             ballSpeed = MainGame.optionsBallSpeed + 3;
+            paddleSpeed = 8;
         }
+
+        if(MainGame.optionsEasyTouchMode == true) {
+            paddleWidth = 75;
+            ballSpeed = ballSpeed - 1;
+        }
+
         pointsToWin = MainGame.optionsPlayTo;
         isSinglePlayer = MainGame.optionsIsSinglePlayer;
         soundOn = MainGame.optionsSoundOn;
@@ -510,6 +518,19 @@ public class GameScreen extends Screen {
 
         // scale the AI speed by the ball speed and difficulty
         int aiPaddleSpeed = ballSpeed - 1;
+        //int aiPaddleSpeed = ballSpeed - (2 - MainGame.aiDifficulty.ordinal());
+
+        // create possible fudge factor
+        int fudgeFactor = 1;
+
+        Random rand = new Random();
+        // int randomNum = rand.nextInt((max - min) + 1) + min;  // max and min inclusive
+        int randInt = rand.nextInt((10 + (MainGame.aiDifficulty.ordinal() * 10) - 0) + 1) + 0; // 0 or 1
+        if(randInt == 0){
+            if(paddle2.getSpeed() > 0){
+                fudgeFactor = -fudgeFactor;
+            }
+        }
 
 
         // Check if ball is moving away or towards paddle
@@ -517,22 +538,22 @@ public class GameScreen extends Screen {
             // Moving away from paddle - center the paddle
             if(paddleMidPointY < (gameScreenHeight / 2)){
                 // If paddle is above middle of screen, move it down
-                paddle2.setSpeed(aiPaddleSpeed);
+                paddle2.setSpeed(aiPaddleSpeed * fudgeFactor);
             }
             else {
                 // If paddle is below middle of screen, move it up
-                paddle2.setSpeed(-aiPaddleSpeed);
+                paddle2.setSpeed(-aiPaddleSpeed * fudgeFactor);
             }
         }
         else {
             // Moving towards the paddle - try to hit the ball
             if(ball.getY() < paddleMidPointY) {
                 // If ball is higher than paddle, then move up
-                paddle2.setSpeed(-aiPaddleSpeed);
+                paddle2.setSpeed(-aiPaddleSpeed * fudgeFactor);
             }
             else {
                 // If ball is lower than paddle, then move down
-                paddle2.setSpeed(aiPaddleSpeed);
+                paddle2.setSpeed(aiPaddleSpeed * fudgeFactor);
             }
         }
     }

@@ -153,6 +153,6 @@ public class OptionsActivity2 extends Activity {
         aiCheckbox.setChecked(false);
 
         System.out.println("EASY ordinal " + Integer.toString(MainGame.AiDifficulty.EASY.ordinal()) + ", " + Integer.toString(MainGame.AiDifficulty.HARD.ordinal()));
-        aiDifficultyDropdown.setSelection(MainGame.AiDifficulty.EASY.ordinal());
+        aiDifficultyDropdown.setSelection(MainGame.AiDifficulty.MODERATE.ordinal());
     }
 }
