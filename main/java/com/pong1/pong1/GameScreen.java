@@ -63,6 +63,9 @@ public class GameScreen extends Screen {
         super(game);
         Log.e("GameScreen", "In GameScreen constructor");
 
+        paddleWidth = 20;
+        mode = MainGame.gameMode;
+
         // set options data
         if(mode == MainGame.Mode.AI_MODE) {
             ballSpeed = MainGame.aiDifficulty.ordinal()*2 + 8;
@@ -83,7 +86,6 @@ public class GameScreen extends Screen {
         soundOn = MainGame.optionsSoundOn;
         useAI = MainGame.optionsUseAI;
 
-        mode = MainGame.gameMode;
 
         int midHeight = gameScreenHeight / 2 - paddleHeight / 2;
         // initialize game objects
