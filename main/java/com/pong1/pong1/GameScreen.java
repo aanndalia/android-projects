@@ -63,7 +63,7 @@ public class GameScreen extends Screen {
         super(game);
         Log.e("GameScreen", "In GameScreen constructor");
 
-        paddleWidth = 20;
+        //paddleWidth = 20;
         mode = MainGame.gameMode;
 
         // set options data
@@ -77,8 +77,11 @@ public class GameScreen extends Screen {
         }
 
         if(MainGame.optionsEasyTouchMode == true) {
-            paddleWidth = 75;
+            paddleWidth = 60;
             ballSpeed = ballSpeed - 1;
+        }
+        else {
+            paddleWidth = 20;
         }
 
         pointsToWin = MainGame.optionsPlayTo;
