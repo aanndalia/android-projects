@@ -39,6 +39,7 @@ public class GameScreen extends Screen {
     public static int paddleWidth;
     public static final int paddleHeight = 80;
     public static final int ballRadius = 10;
+    public static final int paddleDisplayWidth = 20;
 
     public static int ballSpeed;
     public static int pointsToWin;
@@ -338,8 +339,14 @@ public class GameScreen extends Screen {
         g.clearScreen(Color.BLACK);
 
         // Draw game elements
-        g.drawRect(paddle1.getX(), paddle1.getY(), paddle1.getWidth(), paddle1.getHeight(), Color.GREEN);
-        g.drawRect(paddle2.getX(), paddle2.getY(), paddle2.getWidth(), paddle2.getHeight(), Color.GREEN);
+        if(MainGame.optionsEasyTouchMode == true) {
+            g.drawRect(paddle1.getWidth() - paddle1.getX() - paddleDisplayWidth, paddle1.getY(), paddleDisplayWidth, paddle1.getHeight(), Color.GREEN);
+            g.drawRect(paddle2.getX(), paddle2.getY(), paddleDisplayWidth, paddle2.getHeight(), Color.GREEN);
+        }
+        else {
+            g.drawRect(paddle1.getX(), paddle1.getY(), paddle1.getWidth(), paddle1.getHeight(), Color.GREEN);
+            g.drawRect(paddle2.getX(), paddle2.getY(), paddle2.getWidth(), paddle2.getHeight(), Color.GREEN);
+        }
         g.drawCircle(ball.getX(), ball.getY(), ball.getRadius(), Color.BLUE);
 
         // Draw edge lines
