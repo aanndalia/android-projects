@@ -1,10 +1,10 @@
 <resources>
 
     <string name="app_name">AndroidGame</string>
-    <string name="title_activity_options_activity2">OptionsActivity2</string>
+    <string name="title_activity_options_activity2">Options</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_high_scores">HighScoresActivity</string>
+    <string name="title_activity_high_scores">High Scores</string>
 
 </resources>
