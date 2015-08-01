@@ -206,6 +206,7 @@ public class GameScreen extends Screen {
             else{
                 System.out.println("Score player 1");
                 resetBall(-ballSpeed);
+                resetPaddles();
                 ++p1Score;
                 if(p1Score >= pointsToWin) {
                     state = GameState.GameOver;
@@ -243,6 +244,7 @@ public class GameScreen extends Screen {
                     // Not in single player mode, ball hits edge but not paddle
                     System.out.println("Score player 2");
                     resetBall(ballSpeed);
+                    resetPaddles();
                     ++p2Score;
                     if (p2Score >= pointsToWin) {
                         state = GameState.GameOver;
@@ -267,6 +269,12 @@ public class GameScreen extends Screen {
 
         ball.setX(gameScreenWidth / 2);
         ball.setY(gameScreenHeight / 2);
+    }
+
+    private void resetPaddles(){
+        int midHeight = gameScreenHeight / 2 - paddleHeight / 2;
+        paddle1.setY(midHeight);
+        paddle2.setY(midHeight);
     }
 
     private boolean inBounds(Input.TouchEvent event, int x, int y, int width, int height) {
