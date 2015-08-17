@@ -65,8 +65,10 @@ public class MainGame extends AndroidGame {
 
     public static ArrayList<Integer> highScores;
     public static ArrayList<Integer> aiHighScores;
+    public static ArrayList<Integer> aiModeLosses;
     public static String highScoresFileName = "highscores.bin";
     public static String ai_highScoresFileName = "aihighscores.bin";
+    public static String ai_lossesFileName = "aiLosses.bin";
 
     public static Context appContext;
 
@@ -76,6 +78,7 @@ public class MainGame extends AndroidGame {
         appContext = getApplicationContext();
         highScores = deserializeHighScores(highScoresFileName, 10);
         aiHighScores = deserializeHighScores(ai_highScoresFileName, 3);
+        aiModeLosses = deserializeHighScores(ai_lossesFileName, 3);
         return new SplashLoadingScreen(this, appContext);
     }
 

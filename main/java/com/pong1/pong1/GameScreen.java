@@ -248,6 +248,10 @@ public class GameScreen extends Screen {
                     resetPaddles();
                     ++p2Score;
                     if (p2Score >= pointsToWin) {
+                        if(mode == MainGame.Mode.AI_MODE) {
+                            MainGame.aiModeLosses.set(MainGame.aiDifficulty.ordinal(), MainGame.aiModeLosses.get(MainGame.aiDifficulty.ordinal()) + 1);
+                            serializeHighScores(MainGame.ai_lossesFileName, MainGame.aiModeLosses);
+                        }
                         state = GameState.GameOver;
                     }
                     else
@@ -338,10 +342,15 @@ public class GameScreen extends Screen {
         // Clear screen
         g.clearScreen(Color.BLACK);
 
+        //g.drawRect(0, 0, paddle1.getWidth(), gameScreenHeight, Color.GRAY);
+        //g.drawRect(paddle2.getX(), 0, paddle2.getWidth(), gameScreenHeight, Color.GRAY);
+
         // Draw game elements
         if(MainGame.optionsEasyTouchMode == true) {
-            g.drawRect(paddle1.getWidth() - paddle1.getX() - paddleDisplayWidth, paddle1.getY(), paddleDisplayWidth, paddle1.getHeight(), Color.GREEN);
-            g.drawRect(paddle2.getX(), paddle2.getY(), paddleDisplayWidth, paddle2.getHeight(), Color.GREEN);
+            g.drawRect(0, 0, paddle1.getWidth(), gameScreenHeight, Color.GRAY);
+            g.drawRect(paddle2.getX(), 0, paddle2.getWidth(), gameScreenHeight, Color.GRAY);
+            g.drawRect(paddle1.getWidth() - paddle1.getX() - paddleDisplayWidth, paddle1.getY(), paddleDisplayWidth, paddle1.getHeight(), Color.rgb(21, 108, 48));
+            g.drawRect(paddle2.getX(), paddle2.getY(), paddleDisplayWidth, paddle2.getHeight(), Color.rgb(21, 108, 48));
         }
         else {
             g.drawRect(paddle1.getX(), paddle1.getY(), paddle1.getWidth(), paddle1.getHeight(), Color.GREEN);

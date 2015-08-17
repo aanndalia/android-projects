@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import com.pong1.pong1.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class HighScoresActivity extends Activity {
 
     TableLayout scoreTableLayout;
@@ -88,7 +91,9 @@ public class HighScoresActivity extends Activity {
         scoreTableLayout.setStretchAllColumns(true);
 
         // Create header row
-        TableRow headerTR = populateRow(50, "Speed", "Score");
+        ArrayList<String> rowStrValues = new ArrayList<String>(Arrays.asList("Speed", "Score"));
+
+        TableRow headerTR = populateRow(50, rowStrValues);
         scoreTableLayout.addView(headerTR, new TableLayout.LayoutParams(
                 LayoutParams.FILL_PARENT,
                 LayoutParams.WRAP_CONTENT));
@@ -96,7 +101,8 @@ public class HighScoresActivity extends Activity {
         // Go through each item in the array
         for (int current = 0; current < MainGame.highScores.size(); current++)
         {
-            TableRow tr = populateRow(current, Integer.toString(current), Integer.toString(MainGame.highScores.get(current)));
+            rowStrValues = new ArrayList<String>(Arrays.asList(Integer.toString(current), Integer.toString(MainGame.highScores.get(current))));
+            TableRow tr = populateRow(current, rowStrValues);
 
             // Add the TableRow to the TableLayout
             scoreTableLayout.addView(tr, new TableLayout.LayoutParams(
@@ -110,7 +116,8 @@ public class HighScoresActivity extends Activity {
         aiScoresTableLayout.setStretchAllColumns(true);
 
         // Create header row
-        TableRow headerTR = populateRow(50, "Difficulty", "Wins");
+        ArrayList<String> rowStrValues = new ArrayList<String>(Arrays.asList("Difficulty", "Wins", "Loss", "%Win"));
+        TableRow headerTR = populateRow(50, rowStrValues);
         aiScoresTableLayout.addView(headerTR, new TableLayout.LayoutParams(
                 LayoutParams.FILL_PARENT,
                 LayoutParams.WRAP_CONTENT));
@@ -118,7 +125,17 @@ public class HighScoresActivity extends Activity {
         // Go through each item in the array
         for (int current = 0; current < MainGame.aiHighScores.size(); current++)
         {
-            TableRow tr = populateRow(current, MainGame.AiDifficulty.valueFromInt(current), Integer.toString(MainGame.aiHighScores.get(current)));
+            int wins = MainGame.aiHighScores.get(current);
+            int losses = MainGame.aiModeLosses.get(current);
+            float winPercent = 0.00f;
+            if(wins != 0 || losses != 0) {
+                winPercent = 100 * ((float) wins) / (wins + losses);
+            }
+
+            String strWinPercent = String.format("%.2f", winPercent);
+
+            rowStrValues = new ArrayList<String>(Arrays.asList(MainGame.AiDifficulty.valueFromInt(current), Integer.toString(wins), Integer.toString(losses), strWinPercent));
+            TableRow tr = populateRow(current, rowStrValues);
             // Add the TableRow to the TableLayout
             aiScoresTableLayout.addView(tr, new TableLayout.LayoutParams(
                     LayoutParams.FILL_PARENT,
@@ -126,7 +143,7 @@ public class HighScoresActivity extends Activity {
         }
     }
 
-    public TableRow populateRow(int index, String left, String right){
+    public TableRow populateRow(int index, ArrayList<String> rowStrValues){
         // Create a TableRow and give it an ID
         TableRow tr = new TableRow(this);
         tr.setId(100+index);
@@ -134,26 +151,17 @@ public class HighScoresActivity extends Activity {
                 LayoutParams.FILL_PARENT,
                 LayoutParams.WRAP_CONTENT));
 
-        // Create a TextView to house the name of the province
-        TextView labelTV = new TextView(this);
-        labelTV.setId(200+index);
-        labelTV.setText(left);
-        labelTV.setTextColor(Color.WHITE);
-        labelTV.setLayoutParams(new LayoutParams(
-                LayoutParams.FILL_PARENT,
-                LayoutParams.WRAP_CONTENT));
-        tr.addView(labelTV);
-
-        // Create a TextView to house the value of the after-tax income
-        TextView valueTV = new TextView(this);
-        valueTV.setId(index);
-        valueTV.setText(right);
-        valueTV.setTextColor(Color.WHITE);
-        valueTV.setLayoutParams(new LayoutParams(
-                LayoutParams.FILL_PARENT,
-                LayoutParams.WRAP_CONTENT));
-        tr.addView(valueTV);
-
+        for(int i=0; i < rowStrValues.size(); i++) {
+            // Create a TextView to house the name of the first
+            TextView labelTV = new TextView(this);
+            labelTV.setId(200 + 10*i + index);
+            labelTV.setText(rowStrValues.get(i));
+            labelTV.setTextColor(Color.WHITE);
+            labelTV.setLayoutParams(new LayoutParams(
+                    LayoutParams.FILL_PARENT,
+                    LayoutParams.WRAP_CONTENT));
+            tr.addView(labelTV);
+        }
         return tr;
     }
 }

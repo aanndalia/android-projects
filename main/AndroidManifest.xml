@@ -18,12 +18,12 @@
         android:maxSdkVersion="18" />
 
     <application
-        android:icon="@drawable/icon"
-        android:label="Pong1" >
+        android:icon="@drawable/icon3"
+        android:label="Super Pong" >
         <activity
             android:name=".MainGame"
             android:configChanges="keyboard|keyboardHidden|orientation"
-            android:label="Pong1"
+            android:label="Super Pong"
             android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
